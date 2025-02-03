@@ -5,6 +5,7 @@ import com.ead.course.models.CourseModel;
 import com.ead.course.service.CourseService;
 import com.ead.course.specifications.SpecificationTemplate;
 import jakarta.validation.Valid;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
+@Log4j2
 @RequestMapping("/courses")
 @RestController
 public class CourseController {
@@ -25,13 +27,15 @@ public class CourseController {
 
     @PostMapping
     public ResponseEntity<Object> saveCourse(@RequestBody @Valid CourseRecordDto courseRecordDto) {
+
+        log.debug("POST saveCourse courseRecordDto received: {}", courseRecordDto);
+
         if (courseService.existByName(courseRecordDto.name())) {
+            log.debug("Course with name {} already exists", courseRecordDto.name());
             return ResponseEntity.status(HttpStatus.CONFLICT).body("Error: Course name already taken");
         }
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(
-                        courseService.save(courseRecordDto)
-                );
+                .body(courseService.save(courseRecordDto));
     }
 
     @GetMapping
@@ -46,6 +50,7 @@ public class CourseController {
 
     @DeleteMapping("/{courseId}")
     public ResponseEntity<Object> deleteCourse(@PathVariable(value = "courseId") UUID courseId) {
+        log.debug("DELETE deleteCourse courseId received: {}", courseId);
         courseService.delete(courseService.findById(courseId).get());
         return ResponseEntity.status(HttpStatus.OK).body("Course deleted successfully");
     }
@@ -53,6 +58,7 @@ public class CourseController {
     @PutMapping("/{courseId}")
     public ResponseEntity<Object> updateCourse(@PathVariable(value = "courseId") UUID courseId
             , @RequestBody @Valid CourseRecordDto courseRecordDto) {
+        log.debug("PUT updateCourse courseRecordDto received: {}", courseRecordDto);
         return ResponseEntity.status(HttpStatus.OK).body(courseService.update(courseRecordDto, courseService.findById(courseId).get()));
     }
 
