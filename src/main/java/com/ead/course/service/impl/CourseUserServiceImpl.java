@@ -1,7 +1,9 @@
 package com.ead.course.service.impl;
 
+import com.ead.course.clients.AuthUserClient;
 import com.ead.course.models.CourseModel;
 import com.ead.course.models.CourseUserModel;
+
 import com.ead.course.repository.CourseUserRepository;
 import com.ead.course.service.CourseUserService;
 import org.springframework.stereotype.Service;
@@ -13,9 +15,11 @@ import java.util.UUID;
 public class CourseUserServiceImpl implements CourseUserService {
 
     final CourseUserRepository courseUserRepository;
+    final AuthUserClient authUserClient;
 
-    public CourseUserServiceImpl(CourseUserRepository courseUserRepository) {
+    public CourseUserServiceImpl(CourseUserRepository courseUserRepository, AuthUserClient authUserClient) {
         this.courseUserRepository = courseUserRepository;
+        this.authUserClient = authUserClient;
     }
 
     @Override
@@ -27,9 +31,20 @@ public class CourseUserServiceImpl implements CourseUserService {
     @Override
     public CourseUserModel saveAndSubscriptUserInCourse(CourseUserModel courseUserModel) {
         courseUserModel = courseUserRepository.save(courseUserModel);
-
-        //send
-
+        authUserClient.postSubscriptionUserInCourse(courseUserModel.getCourse().getCourseId(), courseUserModel.getUserId());
         return courseUserModel;
     }
+
+    @Override
+    public boolean existsByUserId(UUID userId) {
+        return courseUserRepository.existsByUserId(userId);
+    }
+
+    @Transactional
+    @Override
+    public void deleteAllByUserId(UUID userId) {
+        courseUserRepository.deleteAllByUserId(userId);
+    }
+
 }
+
