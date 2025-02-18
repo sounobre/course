@@ -2,11 +2,12 @@ package com.ead.course.controllers;
 
 import com.ead.course.dtos.CourseRecordDto;
 import com.ead.course.models.CourseModel;
-import com.ead.course.service.CourseService;
+import com.ead.course.services.CourseService;
 import com.ead.course.specifications.SpecificationTemplate;
 import com.ead.course.validations.CourseValidator;
 import jakarta.validation.Valid;
-import lombok.extern.log4j.Log4j2;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -16,10 +17,11 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
-@Log4j2
 @RestController
 @RequestMapping("/courses")
 public class CourseController {
+
+    Logger logger = LogManager.getLogger(CourseController.class);
 
     final CourseService courseService;
     final CourseValidator courseValidator;
@@ -32,7 +34,7 @@ public class CourseController {
     @PostMapping
     public ResponseEntity<Object> saveCourse(@RequestBody CourseRecordDto courseRecordDto,
                                              Errors errors){
-        log.debug("POST saveCourse courseRecordDto received {} ", courseRecordDto);
+        logger.debug("POST saveCourse courseRecordDto received {} ", courseRecordDto);
         courseValidator.validate(courseRecordDto, errors);
         if(errors.hasErrors()){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors.getAllErrors());
@@ -57,7 +59,7 @@ public class CourseController {
 
     @DeleteMapping("/{courseId}")
     public ResponseEntity<Object> deleteCourse(@PathVariable(value = "courseId") UUID courseId){
-        log.debug("DELETE deleteCourse courseId received {} ", courseId);
+        logger.debug("DELETE deleteCourse courseId received {} ", courseId);
         courseService.delete(courseService.findById(courseId).get());
         return ResponseEntity.status(HttpStatus.OK).body("Course deleted successfully.");
     }
@@ -65,7 +67,7 @@ public class CourseController {
     @PutMapping("/{courseId}")
     public ResponseEntity<Object> updateCourse(@PathVariable(value = "courseId") UUID courseId,
                                                @RequestBody @Valid CourseRecordDto courseRecordDto){
-        log.debug("PUT updateCourse courseRecordDto received {} ", courseRecordDto);
+        logger.debug("PUT updateCourse courseRecordDto received {} ", courseRecordDto);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(courseService.update(courseRecordDto, courseService.findById(courseId).get()));
     }
@@ -73,4 +75,3 @@ public class CourseController {
 
 
 }
-

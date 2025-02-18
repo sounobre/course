@@ -7,16 +7,19 @@ import jakarta.validation.constraints.NotNull;
 
 import java.util.UUID;
 
-public record CourseRecordDto(
-                              @NotBlank(message = "Name is mandatory")
+public record CourseRecordDto(@NotBlank(message = "Name is mandatory")
                               String name,
-                              @NotBlank(message = "description is mandatory")
+
+                              @NotBlank(message = "Description is mandatory")
                               String description,
-                              @NotNull(message = "courseStatus is mandatory")
+
+                              @NotNull(message = "CourseStatus is mandatory")
                               CourseStatus courseStatus,
-                              @NotNull(message = "courseLevel is mandatory")
+
+                              @NotNull(message = "CourseLevel is mandatory")
                               CourseLevel courseLevel,
-                              @NotNull(message = "userInstructor is mandatory")
+
+                              @NotNull(message = "UserInstructor is mandatory")
                               UUID userInstructor,
 
                               String imageUrl) {

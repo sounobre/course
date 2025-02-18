@@ -16,16 +16,18 @@ import static org.springframework.data.web.config.EnableSpringDataWebSupport.Pag
 @Configuration
 @EnableSpringDataWebSupport(pageSerializationMode = VIA_DTO)
 public class ResolverConfig implements WebMvcConfigurer {
-    @Override
-    public void addCorsMappings(CorsRegistry registry){
-        registry.addMapping("/**").maxAge(3600);
-    }
 
-    public  void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers){
+    @Override
+    public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
         argumentResolvers.add(new SpecificationArgumentResolver());
 
         var pageableResolver = new PageableHandlerMethodArgumentResolver();
         pageableResolver.setFallbackPageable(PageRequest.of(0, 10));
         argumentResolvers.add(pageableResolver);
+    }
+
+    @Override
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/**").maxAge(3600);
     }
 }

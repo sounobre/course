@@ -8,15 +8,13 @@ import lombok.Data;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.Set;
 import java.util.UUID;
 
+@Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Entity
 @Table(name = "TB_LESSONS")
-@Data
 public class LessonModel implements Serializable {
-
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -29,14 +27,16 @@ public class LessonModel implements Serializable {
     @Column(nullable = false, length = 255)
     private String description;
 
-    @Column(nullable = false, length = 255)
+    @Column(nullable = false)
     private String videoUrl;
 
-    //@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss")
+//    @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "dd-MM-yyyy HH:mm:ss")
     @Column(nullable = false)
     private LocalDateTime creationDate;
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     private ModuleModel module;
+
+
 }
